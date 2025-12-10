@@ -72,29 +72,29 @@ export const HISTORICAL_FIGURES: HistoricalFigure[] = [
 export const AGENT_CONFIGS = {
   [AgentRole.G2]: {
     name: 'G2 - Contexto',
-    color: 'text-blue-400',
-    borderColor: 'border-blue-400',
+    color: 'text-gris-tres-clair', // High contrast
+    borderColor: 'border-gris-clair',
     description: 'Investigación histórica, sociología y resonancia cultural.',
     icon: '📚'
   },
   [AgentRole.G3]: {
     name: 'G3 - Difusión',
-    color: 'text-lechuza-gold',
-    borderColor: 'border-lechuza-gold',
+    color: 'text-bleu-clair', // Accent
+    borderColor: 'border-bleu-clair',
     description: 'Estrategia de divulgación, impacto educativo y curaduría.',
     icon: '🏛️'
   },
   [AgentRole.G4]: {
     name: 'G4 - Narrativa',
-    color: 'text-purple-400',
-    borderColor: 'border-purple-400',
+    color: 'text-gris-bleu', // Soft accent
+    borderColor: 'border-gris-bleu',
     description: 'Diseño de artefactos culturales, estética y storytelling.',
     icon: '🖋️'
   },
   [AgentRole.G5]: {
     name: 'G5 - Crítica',
-    color: 'text-lechuza-alert',
-    borderColor: 'border-lechuza-alert',
+    color: 'text-gris-moyen', // Critical/Serious
+    borderColor: 'border-gris-moyen',
     description: 'Integridad histórica, ética de la memoria y revisión académica.',
     icon: '⚖️'
   }

@@ -15,12 +15,15 @@
               mono: ['JetBrains Mono', 'monospace'],
             },
             colors: {
-              'lechuza-dark': '#0f172a',
-              'lechuza-panel': '#1e293b',
-              'lechuza-accent': '#06b6d4', // Cyan
-              'lechuza-alert': '#ef4444',
-              'lechuza-success': '#10b981',
-              'lechuza-gold': '#d97706',
+              // PALETTE CHROMATIQUE CARTAS
+              'bleu-noir': '#1B1F2F',    // Fondos principales, títulos
+              'bleu-marine': '#1E3A5F',  // Color signature, logo, elementos fuertes
+              'bleu-moyen': '#2A6495',   // Subtítulos, navegación
+              'bleu-clair': '#398ACC',   // Acentos, botones, links
+              'gris-bleu': '#7393B3',    // Transición, secundarios
+              'gris-moyen': '#5C6770',   // Textos secundarios
+              'gris-clair': '#A3B9C9',   // Fondos secundarios, separadores
+              'gris-tres-clair': '#C0D6DF', // Color signature, fondo principal de contenido o texto de alto contraste
             }
           }
         }
@@ -28,8 +31,8 @@
     </script>
     <style>
       body {
-        background-color: #0b1120;
-        color: #e2e8f0;
+        background-color: #1B1F2F; /* Bleu noir */
+        color: #C0D6DF; /* Gris très clair */
       }
       .scrollbar-hide::-webkit-scrollbar {
           display: none;
@@ -39,20 +42,20 @@
           scrollbar-width: none;
       }
       .glass-panel {
-        background: rgba(30, 41, 59, 0.7);
+        background: rgba(30, 58, 95, 0.6); /* Bleu marine with opacity */
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(163, 185, 201, 0.2); /* Gris clair border */
       }
-      /* Markdown Styles */
-      .prose h1 { font-size: 1.5em; font-weight: 800; color: #fff; margin-bottom: 0.5em; }
-      .prose h2 { font-size: 1.25em; font-weight: 700; color: #d97706; margin-top: 1em; margin-bottom: 0.5em; }
-      .prose h3 { font-size: 1.1em; font-weight: 600; color: #06b6d4; margin-top: 1em; margin-bottom: 0.5em; }
+      /* Markdown Styles - Adapted for new palette */
+      .prose h1 { font-size: 1.5em; font-weight: 800; color: #C0D6DF; margin-bottom: 0.5em; }
+      .prose h2 { font-size: 1.25em; font-weight: 700; color: #398ACC; margin-top: 1em; margin-bottom: 0.5em; } /* Bleu clair */
+      .prose h3 { font-size: 1.1em; font-weight: 600; color: #7393B3; margin-top: 1em; margin-bottom: 0.5em; } /* Gris bleu */
       .prose strong { color: #fff; font-weight: 700; }
       .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
       .prose ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
       .prose li { margin-bottom: 0.25em; }
-      .prose p { margin-bottom: 0.75em; line-height: 1.6; }
-      .prose blockquote { border-left: 4px solid #334155; padding-left: 1em; color: #94a3b8; font-style: italic; }
+      .prose p { margin-bottom: 0.75em; line-height: 1.6; color: #A3B9C9; } /* Gris clair text */
+      .prose blockquote { border-left: 4px solid #2A6495; padding-left: 1em; color: #7393B3; font-style: italic; }
     </style>
   <script type="importmap">
 {

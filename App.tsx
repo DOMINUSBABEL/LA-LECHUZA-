@@ -2,94 +2,101 @@ import React, { useState } from 'react';
 import WarRoom from './components/WarRoom';
 import StrategyMatrix from './components/StrategyMatrix';
 import Cronoposting from './components/Cronoposting';
+import Login from './components/Login';
 import { HISTORICAL_FIGURES } from './constants';
 import { HistoricalFigure } from './types';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<'WARROOM' | 'MATRIX' | 'CRONO'>('WARROOM');
   const [selectedFigureId, setSelectedFigureId] = useState<string | null>(null);
 
   const selectedFigure = HISTORICAL_FIGURES.find(f => f.id === selectedFigureId) || null;
 
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
+
   return (
-    <div className="flex h-screen bg-lechuza-dark overflow-hidden font-sans text-slate-100">
+    <div className="flex h-screen bg-bleu-noir overflow-hidden font-sans text-gris-tres-clair selection:bg-bleu-clair selection:text-bleu-noir">
       
-      {/* Sidebar / Dossier Selector */}
-      <aside className="w-64 bg-slate-900 border-r border-slate-700 flex flex-col">
-        <div className="p-6 border-b border-slate-700">
-          <h1 className="text-2xl font-bold font-mono tracking-tighter">
-            <span className="text-lechuza-accent">LA</span> LECHUZA
+      {/* Sidebar - Reference Style */}
+      <aside className="w-72 bg-bleu-noir/90 flex flex-col z-30 shadow-2xl relative">
+        {/* Abstract pattern overlay for sidebar */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{backgroundImage: 'linear-gradient(135deg, #1E3A5F 25%, transparent 25%), linear-gradient(225deg, #1E3A5F 25%, transparent 25%), linear-gradient(45deg, #1E3A5F 25%, transparent 25%), linear-gradient(315deg, #1E3A5F 25%, transparent 25%)', backgroundSize: '20px 20px'}}></div>
+
+        <div className="p-6 relative z-10">
+          <h1 className="text-3xl font-black tracking-tighter leading-none text-white">
+            <span className="text-bleu-clair">LA</span> LECHUZA
           </h1>
-          <p className="text-xs text-slate-500 mt-1">Observatorio Cultural</p>
+          <p className="text-[10px] text-gris-moyen uppercase tracking-widest mt-1">Strategic Narrative System</p>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-4">
-            <h3 className="text-xs font-bold text-slate-500 uppercase mb-3 px-2">Archivo Histórico</h3>
-            <div className="space-y-1">
+        <div className="flex-1 overflow-y-auto px-2 relative z-10">
+            <div className="space-y-1 mt-4">
               {HISTORICAL_FIGURES.map(figure => (
                 <button
                   key={figure.id}
                   onClick={() => setSelectedFigureId(figure.id)}
-                  className={`w-full text-left px-3 py-2 rounded text-sm transition-all ${
+                  className={`group w-full text-left px-4 py-3 border-l-4 transition-all duration-300 relative overflow-hidden ${
                     selectedFigureId === figure.id 
-                      ? 'bg-lechuza-accent/10 text-lechuza-accent border-l-2 border-lechuza-accent' 
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                      ? 'border-bleu-clair bg-gradient-to-r from-bleu-marine/80 to-transparent' 
+                      : 'border-transparent hover:bg-white/5 hover:border-gris-moyen'
                   }`}
                 >
-                  <div className="font-medium truncate">{figure.name}</div>
-                  <div className="text-[10px] opacity-60 truncate">{figure.tags[0]}</div>
+                  <div className={`font-bold text-sm transition-colors ${selectedFigureId === figure.id ? 'text-white' : 'text-gris-clair group-hover:text-white'}`}>
+                    {figure.name}
+                  </div>
+                  <div className="text-[10px] text-gris-moyen uppercase tracking-wide mt-0.5">{figure.tags[0]}</div>
                 </button>
               ))}
             </div>
-          </div>
         </div>
 
-        <div className="p-4 border-t border-slate-700 bg-slate-950">
-           <div className="flex items-center gap-2">
-             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-             <span className="text-xs text-green-500 font-mono">SYSTEM ONLINE</span>
-           </div>
+        <div className="p-4 bg-black/20 backdrop-blur text-[10px] font-mono text-bleu-clair flex items-center gap-2 relative z-10">
+           <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+           SYSTEM ONLINE
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col">
-        {/* Navigation Bar */}
-        <nav className="h-14 bg-slate-900/80 border-b border-slate-700 flex items-center px-6 gap-6 backdrop-blur-sm z-20 overflow-x-auto scrollbar-hide">
+      <main className="flex-1 flex flex-col relative bg-bleu-noir">
+        
+        {/* Top Navigation - Tab Style from Reference */}
+        <header className="h-14 flex items-end px-8 gap-8 border-b border-white/10 bg-bleu-noir/95 backdrop-blur z-20">
             <button 
                 onClick={() => setActiveTab('WARROOM')}
-                className={`h-full border-b-2 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`pb-3 text-xs font-bold uppercase tracking-widest transition-all ${
                     activeTab === 'WARROOM' 
-                    ? 'border-lechuza-accent text-white' 
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                    ? 'text-bleu-clair border-b-2 border-bleu-clair shadow-[0_4px_12px_-2px_rgba(57,138,204,0.5)]' 
+                    : 'text-gris-moyen hover:text-white'
                 }`}
             >
-                OBSERVATORIO
+                COMMAND CENTER (WAR ROOM)
             </button>
             <button 
                 onClick={() => setActiveTab('MATRIX')}
-                className={`h-full border-b-2 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`pb-3 text-xs font-bold uppercase tracking-widest transition-all ${
                     activeTab === 'MATRIX' 
-                    ? 'border-lechuza-gold text-white' 
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                    ? 'text-gris-bleu border-b-2 border-gris-bleu' 
+                    : 'text-gris-moyen hover:text-white'
                 }`}
             >
-                MATRIZ SOCIOLÓGICA
+                STRATEGY MATRIX
             </button>
             <button 
                 onClick={() => setActiveTab('CRONO')}
-                className={`h-full border-b-2 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`pb-3 text-xs font-bold uppercase tracking-widest transition-all ${
                     activeTab === 'CRONO' 
-                    ? 'border-blue-500 text-white' 
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                    ? 'text-bleu-moyen border-b-2 border-bleu-moyen' 
+                    : 'text-gris-moyen hover:text-white'
                 }`}
             >
                 CRONOPOSTING
             </button>
-        </nav>
+        </header>
 
-        {/* Dynamic View */}
+        {/* Dynamic View Container */}
         <div className="flex-1 relative overflow-hidden">
             {activeTab === 'WARROOM' && (
                 <WarRoom 

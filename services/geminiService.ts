@@ -188,6 +188,64 @@ export const generateViralPayloads = async (figure: HistoricalFigure, angle: str
 }
 
 /**
+ * Auto-configures the Cronoposting form based on natural language prompt
+ */
+export const autoConfigureCronoposting = async (figure: HistoricalFigure, magicPrompt: string): Promise<Partial<CronoConfig>> => {
+    const schema: Schema = {
+        type: Type.OBJECT,
+        properties: {
+            duration: { type: Type.STRING },
+            frequency: { type: Type.STRING },
+            tone: { type: Type.STRING },
+            contentMix: { type: Type.STRING },
+            kpi: { type: Type.STRING },
+            productionLevel: { type: Type.STRING },
+            platforms: { type: Type.ARRAY, items: { type: Type.STRING } },
+            formats: { type: Type.ARRAY, items: { type: Type.STRING } },
+            strategicGoal: { type: Type.STRING }
+        }
+    };
+
+    // Valid options for mapping
+    const validOptions = `
+    Duration: "1 Semana (Blitz)", "1 Mes (Sostenimiento)", "3 Meses (Campaña Trimestral)"
+    Frequency: "Baja (Calidad/Ensayo)", "Media (Constancia)", "Alta (Dominancia Algoritmo)"
+    Tone: "Didáctico / Accesible", "Solemne / Académico", "Provocador / Crítico", "Emotivo / Memoria"
+    Mix: "Regla 70/20/10 (Valor/Debate/Promo)", "Storytelling Puro (Narrativa)", "Archivo Documental (Evidencia)"
+    KPI: "Adhesión Cultural (Engagement)", "Alcance (Viralidad)", "Profundidad (Lectura/Retención)"
+    Production: "Bajo (Solo Texto/IA)", "Medio (Híbrido IA/Archivo)", "Alto (Producción Original)"
+    Platforms: "Instagram", "TikTok", "X (Twitter)", "Facebook", "LinkedIn", "Web"
+    Formats: "Reels", "Historias", "Carruseles", "Hilos", "Video Largo", "Imagen Estática"
+    `;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: MODEL_NAME,
+            contents: `Analiza el siguiente 'Magic Prompt' del usuario y selecciona las mejores opciones de configuración para una campaña cultural sobre ${figure.name}.
+            
+            Magic Prompt: "${magicPrompt}"
+            
+            Debes mapear la intención del usuario EXACTAMENTE a una de las opciones válidas listadas abajo. Si no se especifica, infiere la mejor opción basada en la plataforma o el objetivo.
+            
+            OPCIONES VÁLIDAS:
+            ${validOptions}
+            
+            También genera un 'strategicGoal' refinado basado en el prompt.
+            `,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: schema,
+                temperature: 0.2 // Low temperature for strict classification
+            }
+        });
+        return JSON.parse(response.text || "{}");
+    } catch (error) {
+        console.error("Auto-Config Error", error);
+        return {};
+    }
+}
+
+/**
  * Generates Cronoposting Schedule
  */
 export const generateCronoposting = async (figure: HistoricalFigure, config: CronoConfig) => {
