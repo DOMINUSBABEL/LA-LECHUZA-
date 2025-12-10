@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AgentRole, HistoricalFigure, AgentLog } from '../types';
 import { runAgentOperation } from '../services/geminiService';
 import { AGENT_CONFIGS } from '../constants';
-import * as d3 from 'd3'; // Used for potential data viz background or elements
+import { marked } from 'marked';
 
 interface WarRoomProps {
   selectedFigure: HistoricalFigure | null;
@@ -32,16 +32,16 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
     const cmdId = Date.now().toString();
     newLogs.push({
       id: cmdId,
-      agent: AgentRole.G3, // Commander uses Strategy channel usually
+      agent: AgentRole.G3, 
       timestamp: new Date(),
-      content: `COMMAND RECEIVED: ${intent} for TARGET: ${selectedFigure.name}`,
+      content: `CONSULTA INICIADA: ${intent} | SUJETO: ${selectedFigure.name}`,
       metadata: { type: 'USER_INPUT' }
     });
     setLogs(newLogs);
 
     try {
-      // 1. G2 Intel Phase
-      setLogs(prev => [...prev, { id: 'thinking-g2', agent: AgentRole.G2, timestamp: new Date(), content: 'Gathering intelligence...', isThinking: true }]);
+      // 1. G2 Context Phase
+      setLogs(prev => [...prev, { id: 'thinking-g2', agent: AgentRole.G2, timestamp: new Date(), content: 'Analizando contexto histórico y redes de influencia...', isThinking: true }]);
       const g2Res = await runAgentOperation(AgentRole.G2, selectedFigure, intent);
       setLogs(prev => prev.filter(l => l.id !== 'thinking-g2').concat({
         id: Date.now().toString() + 'g2',
@@ -50,8 +50,8 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
         content: g2Res
       }));
 
-      // 2. G3 Strategy Phase
-      setLogs(prev => [...prev, { id: 'thinking-g3', agent: AgentRole.G3, timestamp: new Date(), content: 'Simulating war games...', isThinking: true }]);
+      // 2. G3 Diffusion Phase
+      setLogs(prev => [...prev, { id: 'thinking-g3', agent: AgentRole.G3, timestamp: new Date(), content: 'Diseñando estrategias de mediación cultural...', isThinking: true }]);
       const g3Res = await runAgentOperation(AgentRole.G3, selectedFigure, intent, [g2Res]);
       setLogs(prev => prev.filter(l => l.id !== 'thinking-g3').concat({
         id: Date.now().toString() + 'g3',
@@ -60,8 +60,8 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
         content: g3Res
       }));
 
-      // 3. G5 Risk Assessment (Parallel with Creative)
-      setLogs(prev => [...prev, { id: 'thinking-g5', agent: AgentRole.G5, timestamp: new Date(), content: 'Scanning for risks...', isThinking: true }]);
+      // 3. G5 Critical Review (Parallel)
+      setLogs(prev => [...prev, { id: 'thinking-g5', agent: AgentRole.G5, timestamp: new Date(), content: 'Evaluando integridad histórica y ética...', isThinking: true }]);
       const g5Res = await runAgentOperation(AgentRole.G5, selectedFigure, intent, [g2Res]);
       setLogs(prev => prev.filter(l => l.id !== 'thinking-g5').concat({
         id: Date.now().toString() + 'g5',
@@ -70,8 +70,8 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
         content: g5Res
       }));
 
-      // 4. G4 Creative Payload
-      setLogs(prev => [...prev, { id: 'thinking-g4', agent: AgentRole.G4, timestamp: new Date(), content: 'Fabricating viral payloads...', isThinking: true }]);
+      // 4. G4 Narrative Construction
+      setLogs(prev => [...prev, { id: 'thinking-g4', agent: AgentRole.G4, timestamp: new Date(), content: 'Construyendo artefactos narrativos...', isThinking: true }]);
       const g4Res = await runAgentOperation(AgentRole.G4, selectedFigure, intent, [g2Res, g3Res]);
       setLogs(prev => prev.filter(l => l.id !== 'thinking-g4').concat({
         id: Date.now().toString() + 'g4',
@@ -82,10 +82,21 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
 
     } catch (e) {
       console.error(e);
-      setLogs(prev => [...prev, { id: 'err', agent: AgentRole.G5, timestamp: new Date(), content: 'CRITICAL FAILURE IN OPERATION.' }]);
+      setLogs(prev => [...prev, { id: 'err', agent: AgentRole.G5, timestamp: new Date(), content: 'ERROR CRÍTICO EN EL SISTEMA DE ANÁLISIS.' }]);
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const renderMarkdown = (content: string) => {
+      // Basic markdown rendering using 'marked' if available, or just fallback
+      try {
+          // @ts-ignore
+          const html = marked.parse(content);
+          return { __html: html };
+      } catch (e) {
+          return { __html: `<p>${content}</p>` };
+      }
   };
 
   return (
@@ -98,8 +109,8 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
         {/* Header */}
         <div className="p-4 border-b border-slate-700 bg-slate-900/50 flex justify-between items-center z-10">
             <div>
-                <h2 className="text-xl font-bold text-lechuza-accent tracking-widest">WAR ROOM // LA LECHUZA</h2>
-                <p className="text-xs text-slate-500">ACTIVE TARGET: <span className="text-white">{selectedFigure ? selectedFigure.name.toUpperCase() : 'NO TARGET SELECTED'}</span></p>
+                <h2 className="text-xl font-bold text-lechuza-accent tracking-widest">OBSERVATORIO // LA LECHUZA</h2>
+                <p className="text-xs text-slate-500">SUJETO ACTIVO: <span className="text-white">{selectedFigure ? selectedFigure.name.toUpperCase() : 'SELECCIONAR SUJETO'}</span></p>
             </div>
             <div className="flex gap-2">
                 {Object.values(AgentRole).map(role => (
@@ -112,23 +123,24 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-6 z-10 scrollbar-hide">
             {logs.length === 0 && (
                 <div className="text-center mt-20 opacity-30">
-                    <h3 className="text-4xl mb-4">AWAITING ORDERS</h3>
-                    <p>Select a target and define campaign intent.</p>
+                    <h3 className="text-4xl mb-4">ESPERANDO CONSULTA</h3>
+                    <p>Seleccione una figura histórica y defina el objetivo de difusión.</p>
                 </div>
             )}
             {logs.map((log) => {
                 const config = AGENT_CONFIGS[log.agent];
+                const isUser = log.metadata?.type === 'USER_INPUT';
                 return (
-                    <div key={log.id} className={`flex gap-4 ${log.metadata?.type === 'USER_INPUT' ? 'justify-end' : ''}`}>
-                         {log.metadata?.type !== 'USER_INPUT' && (
-                             <div className={`w-10 h-10 rounded border ${config.borderColor} flex items-center justify-center bg-slate-900 text-lg shrink-0`}>
+                    <div key={log.id} className={`flex gap-4 ${isUser ? 'justify-end' : ''}`}>
+                         {!isUser && (
+                             <div className={`w-10 h-10 rounded border ${config.borderColor} flex items-center justify-center bg-slate-900 text-lg shrink-0 mt-1`}>
                                  {config.icon}
                              </div>
                          )}
-                         <div className={`max-w-3xl p-4 rounded-lg border ${log.metadata?.type === 'USER_INPUT' ? 'border-slate-600 bg-slate-800' : `${config.borderColor} bg-slate-900/80`}`}>
-                            <div className="flex justify-between items-center mb-2 border-b border-white/10 pb-1">
-                                <span className={`text-xs font-bold ${config.color}`}>{config.name}</span>
-                                <span className="text-[10px] text-slate-500">{log.timestamp.toLocaleTimeString()}</span>
+                         <div className={`max-w-4xl p-5 rounded-lg border shadow-lg ${isUser ? 'border-slate-600 bg-slate-800' : `${config.borderColor} bg-slate-900/90`}`}>
+                            <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                                <span className={`text-xs font-bold ${config.color} uppercase tracking-wider`}>{config.name}</span>
+                                <span className="text-[10px] text-slate-500 font-mono">{log.timestamp.toLocaleTimeString()}</span>
                             </div>
                             {log.isThinking ? (
                                 <div className="flex space-x-1 items-center h-6">
@@ -137,9 +149,11 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
                                     <div className="w-2 h-2 bg-current rounded-full animate-bounce delay-150"></div>
                                 </div>
                             ) : (
-                                <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-300">
-                                    {log.content}
-                                </div>
+                                // Render Report Content using Markdown
+                                <div 
+                                    className={`prose prose-invert prose-sm max-w-none ${isUser ? 'font-sans' : 'font-sans text-slate-300'}`}
+                                    dangerouslySetInnerHTML={renderMarkdown(log.content)}
+                                />
                             )}
                          </div>
                     </div>
@@ -154,9 +168,9 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
                     type="text" 
                     value={intent}
                     onChange={(e) => setIntent(e.target.value)}
-                    placeholder={selectedFigure ? "Enter strategic intent (e.g., 'Recover honor of this figure in modern context')..." : "Select a figure from the sidebar first."}
+                    placeholder={selectedFigure ? "Defina la intención cultural (ej. 'Reivindicar su papel en el exilio' o 'Conectar con jóvenes artistas')..." : "Seleccione una figura del panel lateral."}
                     disabled={!selectedFigure || isProcessing}
-                    className="flex-1 bg-slate-800 border border-slate-600 rounded p-3 text-white focus:border-lechuza-accent focus:outline-none disabled:opacity-50"
+                    className="flex-1 bg-slate-800 border border-slate-600 rounded p-3 text-white focus:border-lechuza-accent focus:outline-none disabled:opacity-50 font-sans"
                     onKeyDown={(e) => e.key === 'Enter' && executeCommand()}
                 />
                 <button 
@@ -164,7 +178,7 @@ const WarRoom: React.FC<WarRoomProps> = ({ selectedFigure, onPayloadGenerated })
                     disabled={!selectedFigure || isProcessing}
                     className="px-6 py-3 bg-lechuza-accent text-slate-900 font-bold rounded hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                    EXECUTE
+                    ANALIZAR
                 </button>
             </div>
         </div>

@@ -1,11 +1,10 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { AgentRole, HistoricalFigure } from "../types";
+import { AgentRole, HistoricalFigure, CronoConfig } from "../types";
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// Select model based on complexity (per coding guidelines)
-// Using gemini-3-pro-preview for complex reasoning and structured output
+// Select model based on complexity
 const MODEL_NAME = 'gemini-3-pro-preview';
 
 /**
@@ -23,48 +22,57 @@ export const runAgentOperation = async (
   switch (agent) {
     case AgentRole.G2:
       systemInstruction = `
-        Eres el Agente G2 (Inteligencia) del sistema LA LECHUZA.
-        Tu misión: Analizar la figura histórica de ${figure.name}.
+        Eres el Agente G2 (Contexto e Investigación) del Observatorio Cultural LA LECHUZA.
+        Tu misión: Analizar la figura histórica de ${figure.name} desde una perspectiva sociológica y cultural.
         Metodología:
-        1. Realiza un perfilado psicométrico rápido (OCEAN) basado en su bio: ${figure.bio}.
-        2. Identifica "Pain Points" culturales actuales con los que su vida resuena.
-        3. Detecta oportunidades de narrativa oculta.
-        Salida: Sé conciso, analítico y directo. Usa formato militar/técnico.
+        1. Contextualiza su vida en las redes de influencia de la Europa de entreguerras.
+        2. Identifica temas universales en su biografía que resuenen con la sensibilidad contemporánea (ej. exilio, resistencia, identidad, arte y sociedad).
+        3. Realiza un perfilado de "Capital Cultural": ¿Qué valores simbólicos representa esta figura hoy?
+        
+        FORMATO DE SALIDA (MARKDOWN):
+        Usa encabezados (#, ##) para estructurar el análisis. Usa negritas para conceptos clave.
+        Se conciso pero profundo.
       `;
       break;
     case AgentRole.G3:
       systemInstruction = `
-        Eres el Agente G3 (Estrategia) del sistema LA LECHUZA.
-        Tu misión: Construir una estrategia de campaña para ${figure.name}.
+        Eres el Agente G3 (Estrategia de Difusión) del Observatorio Cultural LA LECHUZA.
+        Tu misión: Diseñar una estrategia de divulgación para la vida y obra de ${figure.name}.
         Intención del usuario: ${userIntent}.
         Metodología:
-        1. Define el objetivo principal (Visibilidad, Reivindicación, Polémica).
-        2. Simula un "War Game": ¿Qué obstáculos enfrentará esta narrativa hoy?
-        3. Asigna canales de ataque (Twitter hilos, Instagram visual, LinkedIn académico).
-        Salida: Plan estratégico estructurado.
+        1. Define el objetivo cultural (Revalorización histórica, Conciencia educativa, Debate ético).
+        2. Simula la recepción sociológica: ¿Cómo interpretarán esta figura los distintos estratos culturales actuales?
+        3. Propone canales de mediación (Exposiciones digitales, Hilos documentales, Podcast narrativo).
+        
+        FORMATO DE SALIDA (MARKDOWN):
+        Estructura el plan estratégicamente. Usa listas y viñetas.
       `;
       break;
     case AgentRole.G4:
       systemInstruction = `
-        Eres el Agente G4 (Creatividad/Comunicaciones) del sistema LA LECHUZA.
-        Tu misión: Crear el contenido para ${figure.name}.
+        Eres el Agente G4 (Narrativa y Estética) del Observatorio Cultural LA LECHUZA.
+        Tu misión: Diseñar los artefactos narrativos para comunicar la historia de ${figure.name}.
         Metodología:
-        1. Genera Hooks (Ganchos) virales.
-        2. Define la estética visual (Prompts de arte).
-        3. Redacta copys persuasivos adaptados a la audiencia moderna.
-        Salida: Lista de ideas creativas y assets textuales.
+        1. Conceptualiza "Ganchos Narrativos" basados en la emoción humana y la curiosidad intelectual.
+        2. Define una dirección de arte para los materiales visuales (Estilo de archivo, collage dadaísta, reconstrucción histórica).
+        3. Redacta fragmentos de guion o texto que prioricen la profundidad y la belleza sobre el "clickbait".
+        
+        FORMATO DE SALIDA (MARKDOWN):
+        Presenta las ideas de forma clara y visualmente distinguida.
       `;
       break;
     case AgentRole.G5:
       systemInstruction = `
-        Eres el Agente G5 (Contra-Inteligencia/PR) del sistema LA LECHUZA.
-        Tu misión: Proteger la narrativa de ${figure.name} y prevenir crisis.
+        Eres el Agente G5 (Crítica y Ética) del Observatorio Cultural LA LECHUZA.
+        Tu misión: Asegurar la integridad histórica y ética en la representación de ${figure.name}.
         Bio: ${figure.bio}.
         Metodología:
-        1. Detecta posibles puntos de controversia (política, religión, acciones pasadas).
-        2. Diseña estrategias de inoculación (cómo responder antes de que ataquen).
-        3. Evalúa la recepción ética en el siglo XXI.
-        Salida: Informe de riesgos y protocolos de respuesta.
+        1. Identifica riesgos de anacronismo o simplificación excesiva.
+        2. Evalúa la sensibilidad ética de los temas tratados (guerra, holocausto, política) en el contexto actual.
+        3. Propone matices necesarios para mantener el rigor académico sin perder accesibilidad.
+        
+        FORMATO DE SALIDA (MARKDOWN):
+        Usa advertencias y recomendaciones claras.
       `;
       break;
   }
@@ -74,16 +82,16 @@ export const runAgentOperation = async (
       model: MODEL_NAME,
       contents: [
         ...contextHistory.map(txt => ({ role: 'user', parts: [{ text: txt }] })),
-        { role: 'user', parts: [{ text: `INFORME REQUERIDO: ${userIntent}` }] }
+        { role: 'user', parts: [{ text: `CONSULTA DE DIFUSIÓN: ${userIntent}` }] }
       ],
       config: {
         systemInstruction: systemInstruction,
         temperature: 0.7,
-        thinkingConfig: { thinkingBudget: 1024 } // Use thinking for depth
+        thinkingConfig: { thinkingBudget: 1024 }
       }
     });
 
-    return response.text || "Error: No intelligence data received.";
+    return response.text || "Error: No data received.";
   } catch (error) {
     console.error("Agent Operation Failed:", error);
     return `[SYSTEM FAILURE] Agent ${agent} offline. Connection error.`;
@@ -91,7 +99,7 @@ export const runAgentOperation = async (
 };
 
 /**
- * Generates the Strategy Matrix (10 Avatars vs 10 Angles)
+ * Generates the Strategy Matrix
  */
 export const generateStrategyMatrix = async (figure: HistoricalFigure, intent: string) => {
   const schema: Schema = {
@@ -103,9 +111,9 @@ export const generateStrategyMatrix = async (figure: HistoricalFigure, intent: s
           type: Type.OBJECT,
           properties: {
             name: { type: Type.STRING },
-            demographic: { type: Type.STRING },
-            psychographic: { type: Type.STRING },
-            painPoints: { type: Type.ARRAY, items: { type: Type.STRING } }
+            culturalInterest: { type: Type.STRING },
+            sociologicalProfile: { type: Type.STRING },
+            engagementBarriers: { type: Type.ARRAY, items: { type: Type.STRING } }
           }
         }
       },
@@ -116,8 +124,8 @@ export const generateStrategyMatrix = async (figure: HistoricalFigure, intent: s
           properties: {
             name: { type: Type.STRING },
             tone: { type: Type.STRING },
-            narrativeFocus: { type: Type.STRING },
-            keyMessage: { type: Type.STRING }
+            pedagogicalApproach: { type: Type.STRING },
+            coreValue: { type: Type.STRING }
           }
         }
       }
@@ -128,28 +136,21 @@ export const generateStrategyMatrix = async (figure: HistoricalFigure, intent: s
   try {
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: `Genera una Matriz de Estrategia para la figura: ${figure.name}.
-      Bio: ${figure.bio}.
-      Intención de campaña: ${intent}.
-      
-      Necesito 5 Avatares de audiencia (Buyer Personas detallados) y 5 Ángulos de Candidato (Voces de marca distintas) que resuenen con esta figura.
-      `,
+      contents: `Genera una Matriz de Resonancia Sociológica para la figura: ${figure.name}. Bio: ${figure.bio}. Intención: ${intent}.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: schema,
         temperature: 0.8
       }
     });
-
     return JSON.parse(response.text || "{}");
   } catch (error) {
-    console.error("Matrix Gen Error:", error);
     return { avatars: [], angles: [] };
   }
 };
 
 /**
- * Generates Viral Payloads (Specific Content Pieces)
+ * Generates Viral Payloads
  */
 export const generateViralPayloads = async (figure: HistoricalFigure, angle: string, avatar: string) => {
    const schema: Schema = {
@@ -160,11 +161,11 @@ export const generateViralPayloads = async (figure: HistoricalFigure, angle: str
         items: {
           type: Type.OBJECT,
           properties: {
-            hook: { type: Type.STRING, description: "First 3 seconds text/audio" },
-            trigger: { type: Type.STRING, description: "Psychological trigger used" },
-            visualPrompt: { type: Type.STRING, description: "AI Image prompt description" },
-            format: { type: Type.STRING, enum: ["Reel", "Carousel", "Thread", "Story"] },
-            caption: { type: Type.STRING, description: "Social media caption" }
+            hook: { type: Type.STRING },
+            educationalValue: { type: Type.STRING },
+            visualConcept: { type: Type.STRING },
+            format: { type: Type.STRING, enum: ["Micro-Documentary", "Digital Archive", "Narrative Thread", "Visual Essay"] },
+            context: { type: Type.STRING }
           }
         }
       }
@@ -174,11 +175,7 @@ export const generateViralPayloads = async (figure: HistoricalFigure, angle: str
    try {
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: `Genera 3 'Cargas Virales' (Contenido de alto impacto) para:
-      Figura: ${figure.name}
-      Dirigido a: ${avatar}
-      Usando el ángulo: ${angle}
-      `,
+      contents: `Genera 3 Artefactos Narrativos para ${figure.name}, Arquetipo: ${avatar}, Voz: ${angle}`,
       config: {
         responseMimeType: "application/json",
         responseSchema: schema
@@ -188,4 +185,64 @@ export const generateViralPayloads = async (figure: HistoricalFigure, angle: str
    } catch (error) {
      return { payloads: [] };
    }
+}
+
+/**
+ * Generates Cronoposting Schedule
+ */
+export const generateCronoposting = async (figure: HistoricalFigure, config: CronoConfig) => {
+    const schema: Schema = {
+        type: Type.OBJECT,
+        properties: {
+            overview: { type: Type.STRING, description: "Strategic summary of the schedule" },
+            posts: {
+                type: Type.ARRAY,
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        day: { type: Type.INTEGER },
+                        date: { type: Type.STRING },
+                        platform: { type: Type.STRING },
+                        format: { type: Type.STRING },
+                        concept: { type: Type.STRING },
+                        copyBrief: { type: Type.STRING },
+                        visualPrompt: { type: Type.STRING },
+                        objective: { type: Type.STRING }
+                    }
+                }
+            }
+        }
+    };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: MODEL_NAME,
+            contents: `Genera un Calendario de Difusión Cultural (Cronoposting) para ${figure.name}.
+            
+            CONFIGURACIÓN TÁCTICA:
+            - Objetivo Magic Prompt: ${config.magicPrompt}
+            - Objetivo Estratégico: ${config.strategicGoal}
+            - Duración: ${config.duration}
+            - Fecha Inicio: ${config.startDate}
+            - Frecuencia: ${config.frequency}
+            - Tono: ${config.tone}
+            - Mix de Contenido: ${config.contentMix}
+            - KPI Principal: ${config.kpi}
+            - Nivel de Producción: ${config.productionLevel}
+            - Plataformas Activas: ${config.platforms.join(', ')}
+            - Formatos Clave: ${config.formats.join(', ')}
+
+            Genera una lista de publicaciones (máximo 10-15 ejemplos representativos si la duración es larga) que cumplan estrictamente con esta configuración cultural y sociológica.
+            `,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: schema,
+                temperature: 0.7
+            }
+        });
+        return JSON.parse(response.text || "{}");
+    } catch (error) {
+        console.error("Crono Gen Error", error);
+        return { overview: "Error generating schedule.", posts: [] };
+    }
 }

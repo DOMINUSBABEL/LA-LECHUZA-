@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import WarRoom from './components/WarRoom';
 import StrategyMatrix from './components/StrategyMatrix';
+import Cronoposting from './components/Cronoposting';
 import { HISTORICAL_FIGURES } from './constants';
 import { HistoricalFigure } from './types';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'WARROOM' | 'MATRIX'>('WARROOM');
+  const [activeTab, setActiveTab] = useState<'WARROOM' | 'MATRIX' | 'CRONO'>('WARROOM');
   const [selectedFigureId, setSelectedFigureId] = useState<string | null>(null);
 
   const selectedFigure = HISTORICAL_FIGURES.find(f => f.id === selectedFigureId) || null;
@@ -19,12 +20,12 @@ function App() {
           <h1 className="text-2xl font-bold font-mono tracking-tighter">
             <span className="text-lechuza-accent">LA</span> LECHUZA
           </h1>
-          <p className="text-xs text-slate-500 mt-1">Strategic Narrative System</p>
+          <p className="text-xs text-slate-500 mt-1">Observatorio Cultural</p>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           <div className="p-4">
-            <h3 className="text-xs font-bold text-slate-500 uppercase mb-3 px-2">Dossier List</h3>
+            <h3 className="text-xs font-bold text-slate-500 uppercase mb-3 px-2">Archivo Histórico</h3>
             <div className="space-y-1">
               {HISTORICAL_FIGURES.map(figure => (
                 <button
@@ -55,26 +56,36 @@ function App() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col">
         {/* Navigation Bar */}
-        <nav className="h-14 bg-slate-900/80 border-b border-slate-700 flex items-center px-6 gap-6 backdrop-blur-sm z-20">
+        <nav className="h-14 bg-slate-900/80 border-b border-slate-700 flex items-center px-6 gap-6 backdrop-blur-sm z-20 overflow-x-auto scrollbar-hide">
             <button 
                 onClick={() => setActiveTab('WARROOM')}
-                className={`h-full border-b-2 px-2 text-sm font-medium transition-colors ${
+                className={`h-full border-b-2 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
                     activeTab === 'WARROOM' 
                     ? 'border-lechuza-accent text-white' 
                     : 'border-transparent text-slate-500 hover:text-slate-300'
                 }`}
             >
-                COMMAND CENTER (WAR ROOM)
+                OBSERVATORIO
             </button>
             <button 
                 onClick={() => setActiveTab('MATRIX')}
-                className={`h-full border-b-2 px-2 text-sm font-medium transition-colors ${
+                className={`h-full border-b-2 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
                     activeTab === 'MATRIX' 
                     ? 'border-lechuza-gold text-white' 
                     : 'border-transparent text-slate-500 hover:text-slate-300'
                 }`}
             >
-                STRATEGY MATRIX
+                MATRIZ SOCIOLÓGICA
+            </button>
+            <button 
+                onClick={() => setActiveTab('CRONO')}
+                className={`h-full border-b-2 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
+                    activeTab === 'CRONO' 
+                    ? 'border-blue-500 text-white' 
+                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                }`}
+            >
+                CRONOPOSTING
             </button>
         </nav>
 
@@ -88,6 +99,11 @@ function App() {
             )}
             {activeTab === 'MATRIX' && (
                 <StrategyMatrix 
+                    selectedFigure={selectedFigure} 
+                />
+            )}
+            {activeTab === 'CRONO' && (
+                <Cronoposting 
                     selectedFigure={selectedFigure} 
                 />
             )}

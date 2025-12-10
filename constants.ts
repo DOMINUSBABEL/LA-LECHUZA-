@@ -71,31 +71,31 @@ export const HISTORICAL_FIGURES: HistoricalFigure[] = [
 
 export const AGENT_CONFIGS = {
   [AgentRole.G2]: {
-    name: 'G2 - Intel',
+    name: 'G2 - Contexto',
     color: 'text-blue-400',
     borderColor: 'border-blue-400',
-    description: 'Análisis profundo, psicometría (OCEAN) y tendencias culturales.',
-    icon: '🔍'
+    description: 'Investigación histórica, sociología y resonancia cultural.',
+    icon: '📚'
   },
   [AgentRole.G3]: {
-    name: 'G3 - Strategy',
+    name: 'G3 - Difusión',
     color: 'text-lechuza-gold',
     borderColor: 'border-lechuza-gold',
-    description: 'Juegos de guerra, análisis FODA dinámico y planificación operativa.',
-    icon: '♟️'
+    description: 'Estrategia de divulgación, impacto educativo y curaduría.',
+    icon: '🏛️'
   },
   [AgentRole.G4]: {
-    name: 'G4 - Creative',
+    name: 'G4 - Narrativa',
     color: 'text-purple-400',
     borderColor: 'border-purple-400',
-    description: 'Generación de narrativa, cargas virales y diseño de contenido.',
-    icon: '🎨'
+    description: 'Diseño de artefactos culturales, estética y storytelling.',
+    icon: '🖋️'
   },
   [AgentRole.G5]: {
-    name: 'G5 - PR & Risk',
+    name: 'G5 - Crítica',
     color: 'text-lechuza-alert',
     borderColor: 'border-lechuza-alert',
-    description: 'Contra-inteligencia, detección de riesgos y gestión de crisis.',
-    icon: '🛡️'
+    description: 'Integridad histórica, ética de la memoria y revisión académica.',
+    icon: '⚖️'
   }
 };
